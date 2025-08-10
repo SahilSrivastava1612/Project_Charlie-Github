@@ -1,0 +1,50 @@
+trigger : none
+
+pool: 'My-AP-DevTF'
+
+variables:
+  Work_Dir : '$(System.DefaultWorkingDirectory)/Charlie_PROD_Root'
+  Service_Connection : 'MyADO_Azure_SC2'
+
+stages:
+
+- stage: ManualValidationAndTerraformApply
+  displayName: 'Manual Validation and Terraform Apply'
+  jobs:
+  - job: TerraformInit
+    displayName: 'Terraform Init Job'
+    steps:
+    - task: TerraformTask@5
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(Work_Dir)'
+        backendServiceArm: $(Service_Connection)
+        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
+
+    - task: TerraformTask@5
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(Work_Dir)'
+        environmentServiceNameAzureRM: $(Service_Connection)
+
+    - task: ManualValidation@1
+      displayName: 'Manual Validation Step'
+      pool: server
+      inputs:
+        notifyUsers: 'sahil.sr123@outlook.com'
+        instructions: 'Please validate the Terraform plan before proceeding to apply changes.'          
+
+    - task: TerraformTask@5
+      displayName: 'Terraform Apply'
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(Work_Dir)'
+        environmentServiceNameAzureRM: $(Service_Connection)
+            

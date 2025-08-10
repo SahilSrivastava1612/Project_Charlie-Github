@@ -1,0 +1,2 @@
+variable "asp" {}
+variable "webapps"{}

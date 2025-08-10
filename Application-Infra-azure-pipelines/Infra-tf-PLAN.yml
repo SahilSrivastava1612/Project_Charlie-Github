@@ -1,0 +1,81 @@
+trigger : none
+
+pr:
+  branches:
+    include:
+      - main
+
+pool: 'My-AP-DevTF'
+
+variables:
+  Work_Dir : '$(System.DefaultWorkingDirectory)/Charlie_PROD_Root'
+  Service_Connection : 'MyADO_Azure_SC2'
+
+stages:
+- stage: TerraformInit
+  displayName: 'Terraform Init'
+  jobs:
+  - job: TerraformInit
+    displayName: 'Terraform Init Job'
+    steps:
+    - task: TerraformTask@5
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(Work_Dir)'
+        backendServiceArm: $(Service_Connection)
+        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
+
+- stage: TerraformValidate
+  displayName: 'Terraform Validate'
+  dependsOn: TerraformInit
+  jobs:
+  - job: TerraformValidate
+    displayName: 'Terraform Validate Job'
+    steps:
+    - task: TerraformTask@5
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(Work_Dir)'
+        backendServiceArm: $(Service_Connection)
+        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
+
+    - task: TerraformTask@5
+      displayName: 'Terraform Validate'
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(Work_Dir)'
+
+- stage: TerraformPlan
+  displayName: 'Terraform Plan'
+  dependsOn: TerraformValidate
+  jobs:
+  - job: TerraformPlan
+    displayName: 'Terraform Plan Job'
+    steps:
+    - task: TerraformTask@5
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(Work_Dir)'
+        backendServiceArm: $(Service_Connection)
+        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
+
+    - task: TerraformTask@5
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(Work_Dir)'
+        environmentServiceNameAzureRM: $(Service_Connection)       
