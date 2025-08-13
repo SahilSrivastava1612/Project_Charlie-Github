@@ -19,7 +19,9 @@ resource "azurerm_linux_web_app" "webapps" {
     service_plan_id = azurerm_service_plan.asp[each.value.service_plan_key].id
     
    site_config {
-  application_stack {
+    always_on = false
+
+   application_stack {
      # NodeJS
       node_version        = each.value.runtime == "node"   ? each.value.version : null
 
@@ -35,8 +37,6 @@ resource "azurerm_linux_web_app" "webapps" {
       java_server_version = each.value.runtime == "java"   ? each.value.java_server_version : null     #nodejs 18 version
   }
 } 
-    
-
     app_settings = {
         "WEBSITE_RUN_FROM_PACKAGE" = "1"
     }

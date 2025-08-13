@@ -1,32 +1,8 @@
 rg = {
-    "charlie_rg_prod_001" = "South Africa North"
-    "rg-app-CICD-prod-001" = "South Africa North"
-}
-
-storageA = {
-    "stappcicd0001" = {
-        name                     = "stappcicd0001"
-        location                 = "South Africa North"
-        resource_group_name      = "rg-app-CICD-prod-001"
-        account_tier             = "Standard"
-        account_replication_type = "LRS"
-    }
-}
-
-storage_container = {
-    "tfstate" = {
-        name                    = "tfstate"
-        storage_account_name    = "stappcicd0001"
-        resource_group_name = "rg-app-CICD-prod-001"
-        container_access_type   = "private"
-    }
-}
-
-data_storage_account = {
-    "stappcicd0001" = {
-        name                = "stappcicd0001"
-        resource_group_name = "rg-app-CICD-prod-001"
-    }
+     charlie_rg_prod_001 = {
+        name     = "charlie_rg_prod_001"
+        location = "South Africa North"
+        }   
 }
 
 AppSP = {

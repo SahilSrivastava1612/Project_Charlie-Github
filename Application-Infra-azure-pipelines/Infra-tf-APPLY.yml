@@ -8,8 +8,8 @@ variables:
 
 stages:
 
-- stage: ManualValidationAndTerraformApply
-  displayName: 'Manual Validation and Terraform Apply'
+- stage: TerraformInit
+  displayName: 'Terraform Init'
   jobs:
   - job: TerraformInit
     displayName: 'Terraform Init Job'
@@ -21,7 +21,25 @@ stages:
         command: 'init'
         workingDirectory: '$(Work_Dir)'
         backendServiceArm: $(Service_Connection)
-        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmStorageAccountName: 'stappcicd0002'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
+
+- stage: TerraformPlan
+  displayName: 'Terraform Plan'
+  dependsOn: TerraformInit
+  jobs:
+  - job: TerraformInitandPlan
+    displayName: 'Terraform Init and Plan Job'
+    steps: 
+    - task: TerraformTask@5
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(Work_Dir)'
+        backendServiceArm: $(Service_Connection)
+        backendAzureRmStorageAccountName: 'stappcicd0002'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'terraform.tfstate'
 
@@ -33,12 +51,37 @@ stages:
         workingDirectory: '$(Work_Dir)'
         environmentServiceNameAzureRM: $(Service_Connection)
 
+- stage: ManualValidation
+  displayName: 'Manual Validation'
+  dependsOn: TerraformPlan
+  pool: server
+  jobs:
+  - job: ManualValidation
+    displayName: 'Manual Validation Job'
+    steps:
     - task: ManualValidation@1
       displayName: 'Manual Validation Step'
-      pool: server
       inputs:
         notifyUsers: 'sahil.sr123@outlook.com'
         instructions: 'Please validate the Terraform plan before proceeding to apply changes.'          
+
+- stage: TerraformApply
+  displayName: 'Terraform Apply'
+  dependsOn: ManualValidation
+  jobs:
+  - job: TerraformInitandApply
+    displayName: 'Terraform Init and Apply Job'
+    steps:
+    - task: TerraformTask@5
+      displayName: 'Terraform Init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(Work_Dir)'
+        backendServiceArm: $(Service_Connection)
+        backendAzureRmStorageAccountName: 'stappcicd0002'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'
 
     - task: TerraformTask@5
       displayName: 'Terraform Apply'
