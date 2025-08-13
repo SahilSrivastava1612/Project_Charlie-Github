@@ -1,4 +1,4 @@
-trigger : none
+trigger: none
 
 pr:
   branches:
@@ -8,15 +8,14 @@ pr:
 pool: 'My-AP-DevTF'
 
 variables:
-  Work_Dir : '$(System.DefaultWorkingDirectory)/Charlie_PROD_Root'
-  Service_Connection : 'MyADO_Azure_SC2'
+  Work_Dir: '$(System.DefaultWorkingDirectory)/Charlie_PROD_Root'
+  Service_Connection: 'MyADO_Azure_SC2'
 
 stages:
 - stage: TerraformInit
   displayName: 'Terraform Init'
   jobs:
   - job: TerraformInit
-    displayName: 'Terraform Init Job'
     steps:
     - task: TerraformTask@5
       displayName: 'Terraform Init'
@@ -25,7 +24,7 @@ stages:
         command: 'init'
         workingDirectory: '$(Work_Dir)'
         backendServiceArm: $(Service_Connection)
-        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmStorageAccountName: 'stappcicd0002'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'terraform.tfstate'
 
@@ -34,7 +33,6 @@ stages:
   dependsOn: TerraformInit
   jobs:
   - job: TerraformValidate
-    displayName: 'Terraform Validate Job'
     steps:
     - task: TerraformTask@5
       displayName: 'Terraform Init'
@@ -43,7 +41,7 @@ stages:
         command: 'init'
         workingDirectory: '$(Work_Dir)'
         backendServiceArm: $(Service_Connection)
-        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmStorageAccountName: 'stappcicd0002'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'terraform.tfstate'
 
@@ -59,7 +57,6 @@ stages:
   dependsOn: TerraformValidate
   jobs:
   - job: TerraformPlan
-    displayName: 'Terraform Plan Job'
     steps:
     - task: TerraformTask@5
       displayName: 'Terraform Init'
@@ -68,7 +65,7 @@ stages:
         command: 'init'
         workingDirectory: '$(Work_Dir)'
         backendServiceArm: $(Service_Connection)
-        backendAzureRmStorageAccountName: 'stappcicd0001'
+        backendAzureRmStorageAccountName: 'stappcicd0002'
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'terraform.tfstate'
 
@@ -78,4 +75,4 @@ stages:
         provider: 'azurerm'
         command: 'plan'
         workingDirectory: '$(Work_Dir)'
-        environmentServiceNameAzureRM: $(Service_Connection)       
+        environmentServiceNameAzureRM: $(Service_Connection)
