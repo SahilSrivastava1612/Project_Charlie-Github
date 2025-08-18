@@ -23,8 +23,28 @@ webapp = {                                                  # Webapp for NodeJs 
         service_plan_key    = "my-asp-linux-001"
         runtime             = "node"
         version             = "18-lts"
-    }
+        startup_command     = "pm2 serve /home/site/wwwroot --no-daemon"
     }
 
+    "charlie-webapp-002" = {
+        name                = "charlie-webapp-ANGULAR-001"
+        location            = "South Africa North"
+        resource_group_name = "charlie_rg_prod_001"
+        service_plan_key    = "my-asp-linux-001"
+        runtime             = "node"
+        version             = "16-lts"
+        startup_command     = "pm2 serve /home/site/wwwroot --no-daemon --spa"
+    }
 
+    "charlie-webapp-003" = {
+        name                = "charlie-webapp-NEXTJS-001"
+        location            = "South Africa North"
+        resource_group_name = "charlie_rg_prod_001"
+        service_plan_key    = "my-asp-linux-001"
+        runtime             = "node"
+        version             = "18-lts"
+        startup_command     = "npm run start"
+    }
+
+}
 
