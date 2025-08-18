@@ -21,6 +21,8 @@ resource "azurerm_linux_web_app" "webapps" {
    site_config {
     always_on = false
 
+     app_command_line = try(each.value.startup_command, null)  #If startup_command exists in tfvars (like for your React app), it will use it, if not it will not set it
+
    application_stack {
      # NodeJS
       node_version        = each.value.runtime == "node"   ? each.value.version : null
